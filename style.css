@@ -51,27 +51,13 @@ h1 {
 }
 
 @keyframes scaleUp {
-    0% {
-        transform: scale(0.01);
-    }
-    40% {
-        transform: scale(0.5);
-    }
-    90% {
-        transform: scale(1.4);
-    }
-    100% {
-        transform: scale(1);
-    }
+    0% {transform: scale(0.01);}
+    40% {transform: scale(0.5);}
+    90% {transform: scale(1.4);}
+    100% {transform: scale(1);}
 }
 @keyframes scaleDown {
-    0% {
-        transform: scale(1);
-    }
-    60% {
-        transform: scale(0.5);
-    }
-    100% {
-        transform: scale(0);
-    }
+    0% {transform: scale(1);}
+    60% {transform: scale(0.5);}
+    100% {transform: scale(0);}
 }
