@@ -1,10 +1,12 @@
-const images = ["🔥", "👺", "👹", "😈", "💀", "🐍", "🤬", "🤡", "👻", "👽", "🤖", "👾", "🧟‍♀️", "🧞‍♂️", "🩻", "🍬", "🧛‍♀️", "👅", "🔪", "🖤"];
+const images = ["🔥", "👺", "👹", "😈", "💀", "🐍", "🤬", "🤡", "👻", "👽", "🤖", "💰", "🧟‍♀️", "🧞‍♂️", "🩻", "🍬", "🧛‍♀️", "👅", "🔪", "🖤"];
 const container = document.querySelector(".game-container");
 let selectedCards = [];
 let player = 0;
 let pairsFound = 0;
 let cardsFound0 = 0;
 let cardsFound1 = 0;
+let cash0 = 0;
+let cash1 = 0;
 
 let cardsArray = [...images, ...images];
 
@@ -57,60 +59,110 @@ function Check() {
 
     if (card0.image === card1.image) {
         pairsFound += 1;
-        selectedCards = [];
-        setTimeout(function() {
-            var success_a = new Audio('success.mp3');
-            success_a.play();
-        }, 300);
-        
-        if(player===0)cardsFound0+=1;
-        else if (player===1)cardsFound1+=1;
-        pairsDisplay.textContent = `Pairs Found: ${pairsFound}`;
-
-        if (pairsFound*2 === cardsArray.length) {
+        let reward = 2;
+        if(card0.image !=="💰"){
             setTimeout(function() {
-                alert("You did it! All cards matched!");
+                PlaySFX('success.mp3',1);
+            }, 300);
+        }else {PlaySFX('jackpot.mp3',1); reward = 4;}
+        
+        if(player===0){
+            cardsFound0+=1; 
+            cash0 += reward; 
+            player1Score.textContent = `Score: ${cardsFound0}`;
+            player1Cash.textContent = `Cash: ${cash0}`;
+            selectedCards.forEach(cardElement => {
+                cardElement.card.style.backgroundColor = '#9459FF';
+            });
+        }else if (player===1){
+            cardsFound1+=1; 
+            cash1 += reward; 
+            player2Score.textContent = `Score: ${cardsFound1}`;
+            player2Cash.textContent = `Cash: ${cash1}`;
+            selectedCards.forEach(cardElement => {
+                cardElement.card.style.backgroundColor = '#FFF658';
+            });
+        }
+        selectedCards = [];
+
+        if (pairsFound === cardsArray.length/2) {
+            setTimeout(function() {
+                alert("temp win text");
             }, 500);
         }
     } else {
-        var wrong_a = new Audio('wrong.mp3');
-        wrong_a.volume = 0.4;
-        wrong_a.play();
+        PlaySFX('wrong.mp3', 0.4);
         setTimeout(function() {
            FlipBack(card0);
             setTimeout(function() {
                 FlipBack(card1);
                 selectedCards = [];
             }, 50);
+            ChangePlayer();
         }, 1000);
-        ChangePlayer();
     }
 }
 
 function ChangePlayer(){
-    if(player===0) player = 1;
-    else player = 0;
+    player1Text.classList.remove("current-player", "player1-border");
+    player2Text.classList.remove("current-player", "player2-border");
+    if(player===0) {player = 1; player2Text.classList.add("current-player", "player2-border")}
+    else {player = 0; player1Text.classList.add("current-player", "player1-border")}
     console.log(player);
-    /*highlight*/ 
 }
 
-/*skore print*/ 
+function PlaySFX(audio, volume){
+    var success_a = new Audio(audio);
+    audio.volume = volume;
+    success_a.play();
+}
+
+
+/*********skore print**********/ 
 const statsContainer = document.createElement("div");
 statsContainer.className = "stats-container";
 container.parentNode.insertBefore(statsContainer, container.nextSibling);
 
+/*hrac 1*/
+const player1Container = document.createElement("div");
+player1Container.className = "player-container";
+statsContainer.appendChild(player1Container);
 
 const player1Text = document.createElement("h1");
 player1Text.className = "player-text";
 player1Text.textContent = `Player 1`;
-statsContainer.appendChild(player1Text);
+player1Container.appendChild(player1Text);
 
-const pairsDisplay = document.createElement("div");
-pairsDisplay.className = "pairs-display";
-pairsDisplay.textContent = `Pairs Found: ${pairsFound}`;
-statsContainer.appendChild(pairsDisplay);
+const player1Score = document.createElement("div");
+player1Score.className = "score-text";
+player1Score.textContent = `Points: ${cardsFound0}`;
+player1Container.appendChild(player1Score);
+
+const player1Cash = document.createElement("div");
+player1Cash.className = "score-text";
+player1Cash.textContent = `Cash: ${cash0}`;
+player1Container.appendChild(player1Cash);
+
+
+/*hrac2*/
+const player2Container = document.createElement("div");
+player2Container.className = "player-container";
+statsContainer.appendChild(player2Container);
 
 const player2Text = document.createElement("h1");
 player2Text.className = "player-text";
 player2Text.textContent = `Player 2`;
-statsContainer.appendChild(player2Text);
+player2Container.appendChild(player2Text);
+
+const player2Score = document.createElement("div");
+player2Score.className = "score-text";
+player2Score.textContent = `Points: ${cardsFound1}`;
+player2Container.appendChild(player2Score);
+
+const player2Cash = document.createElement("div");
+player2Cash.className = "score-text";
+player2Cash.textContent = `Cash: ${cash1}`;
+player2Container.appendChild(player2Cash);
+
+/*init*/
+player1Text.classList.add("current-player", "player1-border");

@@ -3,7 +3,7 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: #f2f2f2;
+    background-color: #c7c7c7;
     margin: 0;
     padding: 20px;
 }
@@ -35,13 +35,11 @@ h1 {
 
 .card .card-back {
     visibility: hidden;
-    background-color: #f9f8f9;
 }
 
 .card.flip .card-back {
     visibility: visible;
     backface-visibility: hidden;
-    background-color: white;
     animation: scaleUp 0.125s forwards;
     transform-origin: center;
 }
@@ -63,28 +61,43 @@ h1 {
 }
 
 /*player stats*/
-.stats-display {
-    margin-top: 20px;
-    font-size: 18px;
-    color: #333;
-    text-align: center;
-}
+
 .stats-container {
     display: flex;
     justify-content: space-around;
     align-items: center;
-    max-width: 300%;
-    margin: 0 auto;
-    padding: 0 50px;
 }
 
-.player-text,.pairs-display {
+.player-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 20px;
+    margin-top: 20px;
+}
+
+.player-text {
     font-size: 20px;
     color: #333;
-    margin: 0;
-    padding: 80px;
+    margin: 20px;
 }
 
-.pairs-display {
-    text-align: center;
+.score-text {
+    font-size: 18px;
+    color: #333;
+    margin: 0;
 }
+
+.current-player{
+    border: 2px solid #333;
+    padding: 10px;
+    border-radius: 5px;
+}
+.player1-border {
+    border: 2px solid #7A30FF;
+}
+
+.player2-border {
+    border: 2px solid #FFF530;
+}
+
