@@ -1,1 +1,1 @@
-moje pexes
+epicke pexeso s abilitkami
