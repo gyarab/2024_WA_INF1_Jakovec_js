@@ -66,23 +66,26 @@ function Check() {
             }, 300);
         }else {PlaySFX('jackpot.mp3',1); reward = 4;}
         
-        if(player===0){
-            cardsFound0+=1; 
+        
+        const isPlayerOne = player === 0;
+        const scoreDisplay = isPlayerOne ? player1Score : player2Score;
+        const cashDisplay = isPlayerOne ? player1Cash : player2Cash;
+        const bgColor = isPlayerOne ? '#9459FF' : '#FFF658';
+
+        if (isPlayerOne) {
+            cardsFound0 += 1; 
             cash0 += reward; 
-            player1Score.textContent = `Score: ${cardsFound0}`;
-            player1Cash.textContent = `Cash: ${cash0}`;
-            selectedCards.forEach(cardElement => {
-                cardElement.card.style.backgroundColor = '#9459FF';
-            });
-        }else if (player===1){
-            cardsFound1+=1; 
+        } else {
+            cardsFound1 += 1; 
             cash1 += reward; 
-            player2Score.textContent = `Score: ${cardsFound1}`;
-            player2Cash.textContent = `Cash: ${cash1}`;
-            selectedCards.forEach(cardElement => {
-                cardElement.card.style.backgroundColor = '#FFF658';
-            });
         }
+
+        scoreDisplay.textContent = `Score: ${isPlayerOne ? cardsFound0 : cardsFound1}`;
+        cashDisplay.textContent = `Cash: ${isPlayerOne ? cash0 : cash1}`;
+
+        selectedCards.forEach(cardElement => {
+            cardElement.card.style.backgroundColor = bgColor;
+        });
         selectedCards = [];
 
         if (pairsFound === cardsArray.length/2) {
