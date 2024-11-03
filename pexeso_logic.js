@@ -1,56 +1,78 @@
-const cardImages = ["🍎", "🍌", "🍇", "🍒", "🍓", "🍍", "🍉", "🍑"]; // Card pairs
-const gameContainer = document.querySelector(".game-container");
-let flippedCards = [];
-let matchedCards = 0;
+const images = ["🔥", "👺", "👹", "😈", "💀", "🐍", "🤬", "🤡", "👻", "👽", "🤖", "👾", "🧟‍♀️", "🧞‍♂️", "🩻", "🍬", "🧛‍♀️", "👅", "🔪", "🖤"];
+const container = document.querySelector(".game-container");
+let selectedCards = [];
+let player = 0;
+let pairsFound = 0;
 
-// Duplicate and shuffle cards
-let cards = [...cardImages, ...cardImages]
-    .sort(() => 0.5 - Math.random())
-    .map((img) => createCardElement(img));
+let cardsArray = [...images, ...images];
 
-// Add cards to the game container
-cards.forEach((card) => gameContainer.appendChild(card));
+for (let i = cardsArray.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    let temp = cardsArray[i];
+    cardsArray[i] = cardsArray[j];
+    cardsArray[j] = temp;
+}
 
-// Function to create each card element
-function createCardElement(img) {
+
+for (let i = 0; i < cardsArray.length; i++) {
+    let cardElement = Instantiate(cardsArray[i]);
+    container.appendChild(cardElement);
+}
+
+function Instantiate(image) {
     const card = document.createElement("div");
-    card.classList.add("card");
+    card.className = "card";
     card.innerHTML = `
-        <div class="card-inner">
-            <div class="card-front"></div>
-            <div class="card-back">${img}</div>
-        </div>
+        <div class="card-back">${image}</div>
     `;
-    card.addEventListener("click", () => flipCard(card, img));
+    card.addEventListener("click", function() {
+        Flip(card, image);
+    });
     return card;
 }
 
-// Function to handle card flipping
-function flipCard(card, img) {
-    if (flippedCards.length < 2 && !card.classList.contains("flip")) {
+function Flip(card, image) {
+    if (selectedCards.length < 2 && !card.classList.contains("flip")) {
         card.classList.add("flip");
-        flippedCards.push({ card, img });
+        selectedCards.push({ card: card, image: image });
 
-        if (flippedCards.length === 2) {
-            checkForMatch();
+        if (selectedCards.length === 2) {
+            Check();
         }
     }
 }
 
-// Function to check for a match
-function checkForMatch() {
-    const [card1, card2] = flippedCards;
-    if (card1.img === card2.img) {
-        matchedCards += 2;
-        flippedCards = [];
-        if (matchedCards === cards.length) {
-            setTimeout(() => alert("Congratulations! You matched all cards!"), 500);
+function FlipBack(card_){
+    card_.card.classList.add("flip-back");
+    setTimeout(() => {
+        card_.card.classList.remove("flip", "flip-back");
+    }, 75);
+}
+
+function Check() {
+    const card0 = selectedCards[0];
+    const card1 = selectedCards[1];
+
+    if (card0.image === card1.image) {
+        pairsFound += 1;
+        selectedCards.forEach(cardElement => {
+            cardElement.card.style.backgroundImage = "🗣️";
+        });
+        selectedCards = [];
+        var success_a = new Audio('success.mp3');
+        success_a.play();
+        if (pairsFound*2 === cardsArray.length) {
+            setTimeout(function() {
+                alert("You did it! All cards matched!");
+            }, 500);
         }
     } else {
-        setTimeout(() => {
-            card1.card.classList.remove("flip");
-            card2.card.classList.remove("flip");
-            flippedCards = [];
+        setTimeout(function() {
+           FlipBack(card0);
+            setTimeout(function() {
+                FlipBack(card1);
+                selectedCards = [];
+            }, 50);
         }, 1000);
     }
 }
