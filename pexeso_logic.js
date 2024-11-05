@@ -3,10 +3,8 @@ const container = document.querySelector(".game-container");
 let selectedCards = [];
 let player = 0;
 let pairsFound = 0;
-let cardsFound0 = 0;
-let cardsFound1 = 0;
-let cash0 = 0;
-let cash1 = 0;
+let cardsFound = [0,0];
+let cash = [0,0];
 
 let cardsArray = [...images, ...images];
 
@@ -71,17 +69,12 @@ function Check() {
         const scoreDisplay = isPlayerOne ? player1Score : player2Score;
         const cashDisplay = isPlayerOne ? player1Cash : player2Cash;
         const bgColor = isPlayerOne ? '#9459FF' : '#FFF658';
+        
+        cardsFound[player] +=1;
+        cash[player] += reward;
 
-        if (isPlayerOne) {
-            cardsFound0 += 1; 
-            cash0 += reward; 
-        } else {
-            cardsFound1 += 1; 
-            cash1 += reward; 
-        }
-
-        scoreDisplay.textContent = `Score: ${isPlayerOne ? cardsFound0 : cardsFound1}`;
-        cashDisplay.textContent = `Cash: ${isPlayerOne ? cash0 : cash1}`;
+        scoreDisplay.textContent = `Score: ${cardsFound[player]}`;
+        cashDisplay.textContent = `Cash: ${cash[player]}`;
 
         selectedCards.forEach(cardElement => {
             cardElement.card.style.backgroundColor = bgColor;
@@ -119,9 +112,7 @@ function PlaySFX(audio, volume){
     audio.volume = volume;
     success_a.play();
 }
-
-
-/*********skore print**********/ 
+//#region skore hrac print
 const statsContainer = document.createElement("div");
 statsContainer.className = "stats-container";
 container.parentNode.insertBefore(statsContainer, container.nextSibling);
@@ -138,12 +129,12 @@ player1Container.appendChild(player1Text);
 
 const player1Score = document.createElement("div");
 player1Score.className = "score-text";
-player1Score.textContent = `Points: ${cardsFound0}`;
+player1Score.textContent = `Points: ${cardsFound[0]}`;
 player1Container.appendChild(player1Score);
 
 const player1Cash = document.createElement("div");
 player1Cash.className = "score-text";
-player1Cash.textContent = `Cash: ${cash0}`;
+player1Cash.textContent = `Cash: ${cash[0]}`;
 player1Container.appendChild(player1Cash);
 
 
@@ -159,13 +150,71 @@ player2Container.appendChild(player2Text);
 
 const player2Score = document.createElement("div");
 player2Score.className = "score-text";
-player2Score.textContent = `Points: ${cardsFound1}`;
+player2Score.textContent = `Points: ${cardsFound[1]}`;
 player2Container.appendChild(player2Score);
 
 const player2Cash = document.createElement("div");
 player2Cash.className = "score-text";
-player2Cash.textContent = `Cash: ${cash1}`;
+player2Cash.textContent = `Cash: ${cash[1]}`;
 player2Container.appendChild(player2Cash);
 
 /*init*/
 player1Text.classList.add("current-player", "player1-border");
+//#endregion
+
+//#region buttony
+const shopContainer = document.createElement("div");
+shopContainer.className = "shop-container";
+statsContainer.parentNode.insertBefore(shopContainer, statsContainer.nextSibling);
+
+const sb_tripleDraft = document.createElement("button");
+sb_tripleDraft.className = "shop-button";
+sb_tripleDraft.innerHTML = "Triple Draft<br>(2pts)"
+sb_tripleDraft.addEventListener("click", () => {
+    console.log("hrac ma ted tripledraft");
+});
+shopContainer.appendChild(sb_tripleDraft);
+
+const sb_shift = document.createElement("button");
+sb_shift.className = "shop-button";
+sb_shift.innerHTML = "2x Line Shift<br>(3pts)";
+sb_shift.addEventListener("click", () => {
+    console.log("hrac ma ted tripledraft");
+});
+shopContainer.appendChild(sb_shift);
+
+const sb_stocks = document.createElement("button");
+sb_stocks.className = "shop-button";
+sb_stocks.innerHTML = "Stocks<br>(3pts)"
+sb_stocks.addEventListener("click", () => {
+    console.log("hrac ma ted tripledraft");
+});
+shopContainer.appendChild(sb_stocks);
+
+const sb_landMine = document.createElement("button");
+sb_landMine.className = "shop-button";
+sb_landMine.innerHTML = "Land Mine<br>(4pts)"
+sb_landMine.addEventListener("click", () => {
+    console.log("hrac ma ted tripledraft");
+});
+shopContainer.appendChild(sb_landMine);
+
+const sb_elevatorMusic = document.createElement("button");
+sb_elevatorMusic.className = "shop-button";
+sb_elevatorMusic.innerHTML = "Elevator Music<br>(1 pt)"
+sb_elevatorMusic.addEventListener("click", () => {
+    console.log("hrac ma ted tripledraft");
+});
+shopContainer.appendChild(sb_elevatorMusic);
+
+const sb_barrage = document.createElement("button");
+sb_barrage.className = "shop-button";
+sb_barrage.innerHTML = "Barrage Bombardment<br>(6pts)"
+sb_barrage.addEventListener("click", () => {
+    console.log("hrac ma ted tripledraft");
+});
+shopContainer.appendChild(sb_barrage);
+
+
+
+//#endregion
