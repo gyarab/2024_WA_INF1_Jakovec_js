@@ -81,7 +81,7 @@ h1 {
     padding: 8px 16px;
     font-size: 16px;
     color: #fff;
-    background-color: #333;
+    background-color: #636363;
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -89,7 +89,7 @@ h1 {
 }
 
 .shop-button:hover {
-    background-color: #555;
+    background-color: #444444;
 }
 
 
