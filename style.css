@@ -15,6 +15,7 @@ h1 {
     margin-bottom: 20px;
 }
 
+/*karty*/
 .game-container {
     display: grid;
     grid-template-columns: repeat(8, 1fr);
@@ -66,6 +67,16 @@ h1 {
     0% {transform: scale(1);}
     60% {transform: scale(0.5);}
     100% {transform: scale(0);}
+}
+/*logo*/
+.header-image {
+    width: 30%; /* Make the image full width */
+    height: auto; /* Maintain aspect ratio */
+    display: block; /* Ensure it behaves like a block element */
+    margin: 0 auto; /* Center the image */
+    position: relative; /* Ensure it stays at the top */
+    z-index: 10; /* Make sure it appears above other elements */
+    margin-bottom: 20px;
 }
 
 /*buttony*/

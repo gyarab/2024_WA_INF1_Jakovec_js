@@ -10,6 +10,14 @@ let tripleDraft = false;
 
 let cardsArray = [...images, ...images];
 
+const headerImage = document.createElement("img");
+headerImage.src = "logo_pexeso.png"; // Replace with your image path
+headerImage.alt = "Game Header Image"; // Alt text for accessibility
+headerImage.className = "header-image"; // Class for styling
+
+// Append the image to the body (or a specific container)
+document.body.insertBefore(headerImage, container);
+
 /*generace*/ 
 for (let i = cardsArray.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
