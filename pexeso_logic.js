@@ -16,6 +16,8 @@ let barrageTargets = [];
 let crosshairs = 0;
 let maxCrosshairs = images.length * 2;
 
+let mvCarInterval;
+
 let cardsArray = [...images, ...images];
 
 const headerImage = document.createElement("img");
@@ -92,6 +94,7 @@ function Check() {
         cardsFound[player] += 1;
         cash[player] += reward;
 
+
         /*abilitky*/ 
         if (tripleDraft) {
             let fifthWheelCardFuckingIndex;
@@ -124,8 +127,17 @@ function Check() {
 
         if (pairsFound === cardsArray.length / 2) {
             setTimeout(function() {
-                alert("temp win text");
+                PlaySFX('media/vytestvy.mp3', 1);
+                setTimeout(function() {
+                    let vytes = cardsFound[0] > cardsFound[1] ? 1 : (cardsFound[0] < cardsFound[1] ? 2 : 'No one');
+                    alert(`Player ${vytes} won!`);
+                }, 3000);
             }, 500);
+        }
+        
+        if(document.querySelector('img[src="media/mv_car.png"]')){
+            PlaySFX('media/verstappen_applause.mp3',1);
+            clearMaxVerstappen();
         }
         BuyLock(false);
     } else {
@@ -141,6 +153,8 @@ function Check() {
             UpdateStockMoves();
             BuyLock(false);
         }, 1000);
+        
+        if(document.querySelector('img[src="media/mv_car.png"]'))clearMaxVerstappen();
     }
     tripleDraft = false;
 }
@@ -380,6 +394,93 @@ function StopBarrage (){
     }
 }
 
+function createMaxVerstappen() {
+    PlaySFX('media/verstappen_intro.mp3',1);
+    setTimeout(() => {
+    
+    const topDistance = mousePosition.y;
+    const bottomDistance = window.innerHeight - mousePosition.y;
+    const leftDistance = mousePosition.x;
+    const rightDistance = window.innerWidth - mousePosition.x;
+
+    let startX, startY;
+
+    if (topDistance > bottomDistance && topDistance > leftDistance && topDistance > rightDistance) {
+        startX = Math.random() * window.innerWidth;
+        startY = -50;
+    } else if (bottomDistance > topDistance && bottomDistance > leftDistance && bottomDistance > rightDistance) {
+        startX = Math.random() * window.innerWidth;
+        startY = window.innerHeight + 50;
+    } else if (leftDistance > topDistance && leftDistance > bottomDistance && leftDistance > rightDistance) {
+        startX = -50;
+        startY = Math.random() * window.innerHeight;
+    } else {
+        startX = window.innerWidth + 50;
+        startY = Math.random() * window.innerHeight;
+    }
+    const mv = document.createElement('img');
+    mv.src = 'media/mv_car.png';
+    mv.style.position = 'fixed';
+    mv.style.width = '100px';
+    mv.style.height = '100px';
+    mv.style.zIndex = 9999;
+    mv.style.left = `${startX}px`;
+    mv.style.top = `${startY}px`;
+    document.body.appendChild(mv);
+
+    moveMaxVerstappen(mv);
+    }, 10000);
+}
+
+function moveMaxVerstappen(mv) {
+    const speed = 10;
+    mvCarInterval = setInterval(() => {
+        if (Math.random() < 0.05) PlaySFX('media/verstappen_honkhonk.mp3')
+        const squareRect = mv.getBoundingClientRect();
+        const dx = mousePosition.x - (squareRect.left + squareRect.width / 2);
+        const dy = mousePosition.y - (squareRect.top + squareRect.height / 2);
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        if (distance < 10) {
+            PlaySFX('media/verstappen_crash.mp3',1);
+            clearInterval(mvCarInterval);
+            mv.remove();
+            clearMaxVerstappen();
+            ChangePlayer();
+        } else {
+            const angle = Math.atan2(dy, dx);
+            mv.style.transform = `rotate(${angle}rad)`;
+            mv.style.left = `${mv.offsetLeft + Math.cos(angle) * speed}px`;
+            mv.style.top = `${mv.offsetTop + Math.sin(angle) * speed}px`;
+        }
+    }, 20);
+}
+
+/*document.addEventListener('keydown', (e) => {
+    if (e.code === 'Space') {
+        createMaxVerstappen();
+    }
+});*/
+function randomMaxVerstappenEvent() {
+    setInterval(() => {
+        if (Math.random() < 0.1) { 
+            createMaxVerstappen();
+        }
+    }, 60000);
+}
+randomMaxVerstappenEvent();
+
+function clearMaxVerstappen() {
+    if (mvCarInterval) {
+        clearInterval(mvCarInterval);
+        mvCarInterval = null;
+    }
+    const mv = document.querySelector('img[src="media/mv_car.png"]');
+    if (mv) {
+        mv.remove();
+    }
+}
+
 function buy(value){
     if(!buyLock){
         if(cash[player] >= value) {
@@ -388,7 +489,6 @@ function buy(value){
 
             UpdateCash();
             
-            console.log("transakce přijata");
             return true;
         }
         else{ 
