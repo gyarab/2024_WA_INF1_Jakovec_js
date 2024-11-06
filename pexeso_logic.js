@@ -11,11 +11,10 @@ let tripleDraft = false;
 let cardsArray = [...images, ...images];
 
 const headerImage = document.createElement("img");
-headerImage.src = "logo_pexeso.png"; // Replace with your image path
-headerImage.alt = "Game Header Image"; // Alt text for accessibility
-headerImage.className = "header-image"; // Class for styling
+headerImage.src = "logo_pexeso.png";
+headerImage.alt = "Game Header Image";
+headerImage.className = "header-image";
 
-// Append the image to the body (or a specific container)
 document.body.insertBefore(headerImage, container);
 
 /*generace*/ 
@@ -47,6 +46,7 @@ function Flip(card, image) {
     if (selectedCards.length < (tripleDraft ? 3 : 2) && !card.classList.contains("flip")) {
         card.classList.add("flip");
         selectedCards.push({ card: card, image: image });
+        BuyLock(true);
 
         if (selectedCards.length === (tripleDraft ? 3 : 2)) {
             Check();
@@ -110,6 +110,8 @@ function Check() {
                 alert("temp win text");
             }, 500);
         }
+
+        BuyLock(false);
     } else {
         PlaySFX('wrong.mp3', 0.4);
         setTimeout(function() {
@@ -120,10 +122,9 @@ function Check() {
                 selectedCards = [];
             }, 50);
             ChangePlayer();
+            BuyLock(false);
         }, 1000);
     }
-
-    buyLock = false;
     tripleDraft = false;
 }
 
@@ -140,11 +141,25 @@ function PlaySFX(audio, volume){
     success_a.play();
 }
 
+function BuyLock(value){
+    if (value){
+        buyLock = true;
+        shopContainer.querySelectorAll(".shop-button").forEach(button => {
+            button.classList.add("locked");
+        });
+    }else{
+        buyLock = false;
+        shopContainer.querySelectorAll(".shop-button").forEach(button => {
+            button.classList.remove("locked");
+        });
+    }
+}
+
 function buy(value){
     if(!buyLock){
         if(cash[player] >= value) {
             cash[player] -= value;
-            buyLock = true;
+            BuyLock(true);
 
             const cashDisplay = player === 0 ? player1Cash : player2Cash;
             cashDisplay.textContent = `Cash: ${cash[player]}`

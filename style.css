@@ -103,6 +103,10 @@ h1 {
     background-color: #444444;
 }
 
+.locked{
+    opacity : 0.5;
+    pointer-events: none;
+}
 
 /* stats*/
 
