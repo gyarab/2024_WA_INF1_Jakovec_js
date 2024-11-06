@@ -174,6 +174,10 @@ function BuyLock(value){
     }
 }
 
+function hasStockOnCard(card, playerIndex) {
+    return playerStocks[playerIndex].some(stock => stock.card === card);
+}
+
 function PlaceStocks() {
 
     UpdateCash();
@@ -181,7 +185,7 @@ function PlaceStocks() {
     const selectStockCard = (e) => {
         const card = e.target.closest(".card");
 
-        if (card && !card.classList.contains("flip")) {
+        if (card && !card.classList.contains("flip") && !hasStockOnCard(card, player)) {
                 
             playerStocks[player].push({
                 card: card,
@@ -191,7 +195,7 @@ function PlaceStocks() {
                 stockIndex: playerStocks[player].length - 1 
             });
 
-            alert(`Card invested in: ${card.querySelector(".card-back").textContent}. Must stay unmatched for 6 turns.`);
+            alert(`Card invested in. Must stay unmatched for 6 turns.`);
 
             const stockIcon = document.createElement("div");
             stockIcon.className = "stock-icon";
@@ -202,7 +206,7 @@ function PlaceStocks() {
 
             container.removeEventListener("click", selectStockCard);
             stockSelect = false;
-        } else if (card && card.classList.contains("flip")) {
+        } else if (card) {
             PlaySFX('stocks_denied.mp3', 1);
         }
         
@@ -310,21 +314,11 @@ sb_tripleDraft.addEventListener("click", () => {
 });
 shopContainer.appendChild(sb_tripleDraft);
 
-const sb_shift = document.createElement("button");
-sb_shift.className = "shop-button";
-sb_shift.innerHTML = "2x Line Shift<br>(3pts)";
-sb_shift.addEventListener("click", () => {
-    console.log("hrac ma ted tripleDraft");
-});
-shopContainer.appendChild(sb_shift);
-
 const sb_stocks = document.createElement("button");
 sb_stocks.className = "shop-button";
 sb_stocks.innerHTML = "Stocks<br>(3pts)"
 sb_stocks.addEventListener("click", () => {
-    
     if(buy(3)){ stockSelect = true;PlaceStocks();}
-    alert("Select a card to invest in within the next move.");
 });
 shopContainer.appendChild(sb_stocks);
 
