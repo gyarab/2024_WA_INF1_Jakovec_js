@@ -336,13 +336,10 @@ sb_elevatorMusic.innerHTML = "Elevator Music<br>(1pt)"
 sb_elevatorMusic.addEventListener("click", () => {
     if(buy(1)){ 
         PlaySFX('elevator_ding.mp3',1);
-
         setTimeout(() => {
             PlaySFX('elevator_tune.mp3',1);
-    
             setTimeout(() => {
                 PlaySFX('elevator_noise.mp3',1);
-
                 setTimeout(() => {
                    PlaySFX('elevator_voice.mp3',1);
                 }, 79000);
