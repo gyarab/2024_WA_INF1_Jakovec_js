@@ -108,6 +108,15 @@ h1 {
     pointer-events: none;
 }
 
+/*abilitky*/
+.stock-icon {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    font-size: 1.25rem;
+    pointer-events: none;
+}
+
 /* stats*/
 
 .stats-container {

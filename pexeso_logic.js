@@ -5,8 +5,13 @@ let player = 0;
 let pairsFound = 0;
 let cardsFound = [0,0];
 let cash = [10,1];
+
 let buyLock = false;
 let tripleDraft = false;
+let stockSelect = false;
+let stockCard = null;
+let stockPlayers = null;
+let stockMovesLeft = 0;
 
 let cardsArray = [...images, ...images];
 
@@ -43,7 +48,7 @@ function Instantiate(image) {
 }
 
 function Flip(card, image) {
-    if (selectedCards.length < (tripleDraft ? 3 : 2) && !card.classList.contains("flip")) {
+    if (selectedCards.length < (tripleDraft ? 3 : 2) && !card.classList.contains("flip") && !stockSelect) {
         card.classList.add("flip");
         selectedCards.push({ card: card, image: image });
         BuyLock(true);
@@ -75,18 +80,13 @@ function Check() {
             }, 300);
         }else {PlaySFX('jackpot.mp3',1); reward = 4;}
         
-        
         const isPlayerOne = player === 0;
-        const scoreDisplay = isPlayerOne ? player1Score : player2Score;
-        const cashDisplay = isPlayerOne ? player1Cash : player2Cash;
         const bgColor = isPlayerOne ? '#9459FF' : '#FFF658';
         
         cardsFound[player] +=1;
         cash[player] += reward;
 
-        scoreDisplay.textContent = `Score: ${cardsFound[player]}`;
-        cashDisplay.textContent = `Cash: ${cash[player]}`;
-
+        /*abilitky*/ 
         if (tripleDraft) {
             let fifthWheelCardFuckingIndex;
             if (card0.image === card1.image) {
@@ -100,10 +100,18 @@ function Check() {
             selectedCards.splice(fifthWheelCardFuckingIndex, 1);
         }
 
+        if(stockCard != null){
+            if (card0.image === stockCard.image ||card1.image === stockCard.image||tripleDraft && card2.image === stockCard.image) {
+               ResetStocks(); 
+               alert(`Stock unsuccessful! Player ${stockPlayer + 1} is a poor investor. HAH!`)
+            }
+        }
+
         selectedCards.forEach(cardElement => {
             cardElement.card.style.backgroundColor = bgColor;
         });
         selectedCards = [];
+        UpdateCash();
 
         if (pairsFound === cardsArray.length/2) {
             setTimeout(function() {
@@ -122,6 +130,7 @@ function Check() {
                 selectedCards = [];
             }, 50);
             ChangePlayer();
+            UpdateStockMoves();
             BuyLock(false);
         }, 1000);
     }
@@ -141,6 +150,12 @@ function PlaySFX(audio, volume){
     success_a.play();
 }
 
+function UpdateCash() {
+    player1Cash.textContent = `Cash: ${cash[0]}`;
+
+    player2Cash.textContent = `Cash: ${cash[1]}`;
+}
+
 function BuyLock(value){
     if (value){
         buyLock = true;
@@ -155,14 +170,63 @@ function BuyLock(value){
     }
 }
 
+function PlaceStocks(){
+    stockPlayer = player;
+    stockMovesLeft = 5;
+    UpdateCash();
+
+    const selectStockCard = (e) => {
+        const card = e.target.closest(".card");
+
+        if (stockPlayer === player && stockMovesLeft === 5) {
+            if (card && !card.classList.contains("flip")) {
+                stockCard = card;
+                stockCard.image = card.querySelector(".card-back").textContent;
+                alert(`Card invested in: ${stockCard.textContent}. Must stay unmatched for 6 turns.`);
+
+                const stockIcon = document.createElement("div");
+                stockIcon.className = "stock-icon";
+                stockIcon.textContent = "💸";
+                card.appendChild(stockIcon);
+                stockCard.icon = stockIcon;
+                
+                container.removeEventListener("click", selectStockCard);
+                stockSelect = false;
+            } else if (card && card.classList.contains("flip")) {
+                PlaySFX('stocks_denied.mp3', 1);
+            }
+        }
+    };
+    container.addEventListener("click", selectStockCard);
+}
+
+function UpdateStockMoves(){
+    if(stockMovesLeft > 0) stockMovesLeft--;
+    else if (stockMovesLeft === 0 && stockPlayer != null) {
+        cash[stockPlayer] += 8;
+        console.log(stockPlayer);
+        console.log(cash[stockPlayer]);
+        UpdateCash();
+        ResetStocks();
+        alert(`Stock successful! Player ${stockPlayer + 1} gains 8 cash.`);
+    }
+}
+
+function ResetStocks(){
+    stockMovesLeft = 0;
+    stockCard.removeChild(stockCard.icon);
+    stockCard = null;
+    stockPlayer = null;
+}
+
+
 function buy(value){
     if(!buyLock){
         if(cash[player] >= value) {
             cash[player] -= value;
             BuyLock(true);
 
-            const cashDisplay = player === 0 ? player1Cash : player2Cash;
-            cashDisplay.textContent = `Cash: ${cash[player]}`
+            UpdateCash();
             
             console.log("transakce přijata");
             return true;
@@ -246,7 +310,9 @@ const sb_stocks = document.createElement("button");
 sb_stocks.className = "shop-button";
 sb_stocks.innerHTML = "Stocks<br>(3pts)"
 sb_stocks.addEventListener("click", () => {
-    console.log("hrac ma ted tripleDraft");
+    stockSelect = true;
+    if(buy(3)) PlaceStocks();
+    alert("Select a card to invest in within the next move.");
 });
 shopContainer.appendChild(sb_stocks);
 
