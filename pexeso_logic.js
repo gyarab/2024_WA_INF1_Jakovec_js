@@ -250,7 +250,7 @@ function PlaceMine(){
     followImage.src = 'media/mine.png';
     followImage.style.position = 'absolute';
     followImage.style.pointerEvents = 'none';
-    followImage.style.width = '2.5%';
+    followImage.style.width = '4%';
     followImage.style.height = '3%';
     document.body.appendChild(followImage);
 
@@ -366,8 +366,10 @@ function BarrageExplosion(card) {
             }
         }, 50);
         setTimeout(() => {
-            card.removeChild(explosionfx);
             clearInterval(checkMouseInside); 
+        }, 250);
+        setTimeout(() => {
+            card.removeChild(explosionfx); 
         }, 700);
     }, 100);
 }
