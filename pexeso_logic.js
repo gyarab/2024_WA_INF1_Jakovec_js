@@ -334,7 +334,21 @@ const sb_elevatorMusic = document.createElement("button");
 sb_elevatorMusic.className = "shop-button";
 sb_elevatorMusic.innerHTML = "Elevator Music<br>(1pt)"
 sb_elevatorMusic.addEventListener("click", () => {
-    console.log("hrac ma ted tripleDraft");
+    if(buy(1)){ 
+        PlaySFX('elevator_ding.mp3',1);
+
+        setTimeout(() => {
+            PlaySFX('elevator_tune.mp3',1);
+    
+            setTimeout(() => {
+                PlaySFX('elevator_noise.mp3',1);
+
+                setTimeout(() => {
+                   PlaySFX('elevator_voice.mp3',1);
+                }, 79000);
+            }, 20000);
+        }, 1000);
+    }
 });
 shopContainer.appendChild(sb_elevatorMusic);
 
