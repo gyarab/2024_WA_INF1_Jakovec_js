@@ -10,6 +10,7 @@ let buyLock = false;
 let tripleDraft = false;
 let stockSelect = false;
 let playerStocks = [[], []];
+let mines = [];
 
 let cardsArray = [...images, ...images];
 
@@ -179,6 +180,7 @@ function hasStockOnCard(card, playerIndex) {
 }
 
 function PlaceStocks() {
+    alert("Select a card you want to invest in. The card must stay unmatched for 6 turns.")
 
     UpdateCash();
 
@@ -194,8 +196,6 @@ function PlaceStocks() {
                 playerIndex: player, 
                 stockIndex: playerStocks[player].length - 1 
             });
-
-            alert(`Card invested in. Must stay unmatched for 6 turns.`);
 
             const stockIcon = document.createElement("div");
             stockIcon.className = "stock-icon";
@@ -234,6 +234,42 @@ function ResetStock(stock) {
     stock.card.removeChild(stock.icon);
     playerStocks[stock.playerIndex].splice(stock.stockIndex, 1);
 }
+
+function PlaceMine(){
+    stockSelect = true;
+
+    const followImage = document.createElement('img');
+    followImage.src = 'mine.png';
+    followImage.style.position = 'absolute';
+    followImage.style.pointerEvents = 'none';
+    followImage.style.width = '2.5%';
+    followImage.style.height = '3%';
+    document.body.appendChild(followImage);
+
+    document.addEventListener('mousemove', function(event) {
+        const imageWidth = followImage.offsetWidth;
+        const imageHeight = followImage.offsetHeight;
+    
+        followImage.style.left = (event.pageX - imageWidth / 2) + 'px';
+        followImage.style.top = (event.pageY - imageHeight / 2) + 'px';
+    });
+
+    const selectCard = (e) => {
+        const card = e.target.closest(".card");
+
+        if (card && !card.classList.contains("flip")) {
+            mines.push(card);
+            container.removeEventListener("click", selectCard);
+            stockSelect = false;
+            followImage.remove();
+        } else if (card) {
+            PlaySFX('stocks_denied.mp3', 1);
+        }
+    };
+
+    container.addEventListener("click", selectCard);
+}
+
 
 
 function buy(value){
@@ -310,7 +346,9 @@ const sb_tripleDraft = document.createElement("button");
 sb_tripleDraft.className = "shop-button";
 sb_tripleDraft.innerHTML = "Triple Draft<br>(3pts)"
 sb_tripleDraft.addEventListener("click", () => {
-    if(buy(3)) tripleDraft = true;
+    if(buy(3)) {
+        tripleDraft = true;
+        PlaySFX('purchase.mp3',1);}
 });
 shopContainer.appendChild(sb_tripleDraft);
 
@@ -326,7 +364,13 @@ const sb_landMine = document.createElement("button");
 sb_landMine.className = "shop-button";
 sb_landMine.innerHTML = "Land Mine<br>(4pts)"
 sb_landMine.addEventListener("click", () => {
-    console.log("hrac ma ted tripleDraft");
+    if(buy(4)){ 
+        PlaceMine();
+        PlaySFX('mine_arm.mp3',1);
+        setTimeout(() => {
+            PlaySFX('mine_arm.mp3',1);
+        }, 50);
+    }
 });
 shopContainer.appendChild(sb_landMine);
 
@@ -353,7 +397,9 @@ const sb_barrage = document.createElement("button");
 sb_barrage.className = "shop-button";
 sb_barrage.innerHTML = "Barrage Bombardment<br>(6pts)"
 sb_barrage.addEventListener("click", () => {
-    console.log("hrac ma ted tripleDraft");
+    if(buy(6)){ 
+        PlaySFX('purchase.mp3',1);
+    }
 });
 shopContainer.appendChild(sb_barrage);
 
