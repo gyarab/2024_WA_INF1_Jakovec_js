@@ -9,9 +9,7 @@ let cash = [10,1];
 let buyLock = false;
 let tripleDraft = false;
 let stockSelect = false;
-let stockCard = null;
-let stockPlayers = null;
-let stockMovesLeft = 0;
+let playerStocks = [[], []];
 
 let cardsArray = [...images, ...images];
 
@@ -74,16 +72,19 @@ function Check() {
     if (card0.image === card1.image || (tripleDraft && card1.image === card2.image || tripleDraft && card2.image === card0.image)) {
         pairsFound += 1;
         let reward = 2;
-        if(card0.image !=="💰"){
-            setTimeout(function() {
-                PlaySFX('success.mp3',1);
+        if(card0.image !== "💰") {
+            setTimeout(() => {
+                PlaySFX('success.mp3', 1);
             }, 300);
-        }else {PlaySFX('jackpot.mp3',1); reward = 4;}
-        
+        } else {
+            PlaySFX('jackpot.mp3', 1);
+            reward = 4;
+        }
+
         const isPlayerOne = player === 0;
         const bgColor = isPlayerOne ? '#9459FF' : '#FFF658';
         
-        cardsFound[player] +=1;
+        cardsFound[player] += 1;
         cash[player] += reward;
 
         /*abilitky*/ 
@@ -100,12 +101,15 @@ function Check() {
             selectedCards.splice(fifthWheelCardFuckingIndex, 1);
         }
 
-        if(stockCard != null){
-            if (card0.image === stockCard.image ||card1.image === stockCard.image||tripleDraft && card2.image === stockCard.image) {
-               ResetStocks(); 
-               alert(`Stock unsuccessful! Player ${stockPlayer + 1} is a poor investor. HAH!`)
-            }
-        }
+        // Check if the matched card is an active stock
+        playerStocks.forEach((stocks, playerIndex) => {
+            stocks.forEach(stock => {
+                if (card0.image === stock.image || card1.image === stock.image || (tripleDraft && card2.image === stock.image)) {
+                    ResetStock(stock);
+                    alert(`Stock unsuccessful! Player ${stock.playerIndex + 1} is a poor investor. HAH!`);
+                }
+            });
+        });
 
         selectedCards.forEach(cardElement => {
             cardElement.card.style.backgroundColor = bgColor;
@@ -113,7 +117,7 @@ function Check() {
         selectedCards = [];
         UpdateCash();
 
-        if (pairsFound === cardsArray.length/2) {
+        if (pairsFound === cardsArray.length / 2) {
             setTimeout(function() {
                 alert("temp win text");
             }, 500);
@@ -123,7 +127,7 @@ function Check() {
     } else {
         PlaySFX('wrong.mp3', 0.4);
         setTimeout(function() {
-           FlipBack(card0);
+            FlipBack(card0);
             setTimeout(function() {
                 FlipBack(card1);
                 if (selectedCards.length > 2) FlipBack(card2);
@@ -170,53 +174,61 @@ function BuyLock(value){
     }
 }
 
-function PlaceStocks(){
-    stockPlayer = player;
-    stockMovesLeft = 5;
+function PlaceStocks() {
+
     UpdateCash();
 
     const selectStockCard = (e) => {
         const card = e.target.closest(".card");
 
-        if (stockPlayer === player && stockMovesLeft === 5) {
-            if (card && !card.classList.contains("flip")) {
-                stockCard = card;
-                stockCard.image = card.querySelector(".card-back").textContent;
-                alert(`Card invested in: ${stockCard.textContent}. Must stay unmatched for 6 turns.`);
-
-                const stockIcon = document.createElement("div");
-                stockIcon.className = "stock-icon";
-                stockIcon.textContent = "💸";
-                card.appendChild(stockIcon);
-                stockCard.icon = stockIcon;
+        if (card && !card.classList.contains("flip")) {
                 
-                container.removeEventListener("click", selectStockCard);
-                stockSelect = false;
-            } else if (card && card.classList.contains("flip")) {
-                PlaySFX('stocks_denied.mp3', 1);
-            }
+            playerStocks[player].push({
+                card: card,
+                image: card.querySelector(".card-back").textContent,
+                turnsRemaining: 5, 
+                playerIndex: player, 
+                stockIndex: playerStocks[player].length - 1 
+            });
+
+            alert(`Card invested in: ${card.querySelector(".card-back").textContent}. Must stay unmatched for 6 turns.`);
+
+            const stockIcon = document.createElement("div");
+            stockIcon.className = "stock-icon";
+            stockIcon.textContent = "💸";
+            card.appendChild(stockIcon);
+
+            playerStocks[player][playerStocks[player].length - 1].icon = stockIcon;
+
+            container.removeEventListener("click", selectStockCard);
+            stockSelect = false;
+        } else if (card && card.classList.contains("flip")) {
+            PlaySFX('stocks_denied.mp3', 1);
         }
+        
     };
     container.addEventListener("click", selectStockCard);
 }
 
-function UpdateStockMoves(){
-    if(stockMovesLeft > 0) stockMovesLeft--;
-    else if (stockMovesLeft === 0 && stockPlayer != null) {
-        cash[stockPlayer] += 8;
-        console.log(stockPlayer);
-        console.log(cash[stockPlayer]);
-        UpdateCash();
-        ResetStocks();
-        alert(`Stock successful! Player ${stockPlayer + 1} gains 8 cash.`);
-    }
+function UpdateStockMoves() {
+    playerStocks.forEach((stocks, playerIndex) => {
+        stocks.forEach(stock => {
+            if (stock.turnsRemaining > 0) {
+                stock.turnsRemaining--;
+            } else if (stock.turnsRemaining === 0) {
+                cash[playerIndex] += 8;
+                UpdateCash();
+                alert(`Stock successful! Player ${playerIndex + 1} gains 8 cash.`);
+
+                ResetStock(stock);
+            }
+        });
+    });
 }
 
-function ResetStocks(){
-    stockMovesLeft = 0;
-    stockCard.removeChild(stockCard.icon);
-    stockCard = null;
-    stockPlayer = null;
+function ResetStock(stock) {
+    stock.card.removeChild(stock.icon);
+    playerStocks[stock.playerIndex].splice(stock.stockIndex, 1);
 }
 
 
@@ -310,8 +322,8 @@ const sb_stocks = document.createElement("button");
 sb_stocks.className = "shop-button";
 sb_stocks.innerHTML = "Stocks<br>(3pts)"
 sb_stocks.addEventListener("click", () => {
-    stockSelect = true;
-    if(buy(3)) PlaceStocks();
+    
+    if(buy(3)){ stockSelect = true;PlaceStocks();}
     alert("Select a card to invest in within the next move.");
 });
 shopContainer.appendChild(sb_stocks);
@@ -339,7 +351,5 @@ sb_barrage.addEventListener("click", () => {
     console.log("hrac ma ted tripleDraft");
 });
 shopContainer.appendChild(sb_barrage);
-
-
 
 //#endregion
