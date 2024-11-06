@@ -4,13 +4,17 @@ let selectedCards = [];
 let player = 0;
 let pairsFound = 0;
 let cardsFound = [0,0];
-let cash = [10,1];
+let cash = [10,10];
 
 let buyLock = false;
 let tripleDraft = false;
 let stockSelect = false;
 let playerStocks = [[], []];
 let mines = [];
+let barrageActive = false;
+let barrageTargets = [];
+let crosshairs = 0;
+let maxCrosshairs = images.length * 2;
 
 let cardsArray = [...images, ...images];
 
@@ -107,7 +111,7 @@ function Check() {
             stocks.forEach(stock => {
                 if (card0.image === stock.image || card1.image === stock.image || (tripleDraft && card2.image === stock.image)) {
                     ResetStock(stock);
-                    alert(`Stock unsuccessful! Player ${stock.playerIndex + 1} is a poor investor. HAH!`);
+                    alert(`Investment unsuccessful! Player ${stock.playerIndex + 1} is a poor investor. HAH!`);
                 }
             });
         });
@@ -123,7 +127,6 @@ function Check() {
                 alert("temp win text");
             }, 500);
         }
-
         BuyLock(false);
     } else {
         PlaySFX('media/wrong.mp3', 0.4);
@@ -143,10 +146,15 @@ function Check() {
 }
 
 function ChangePlayer(){
+    StopBarrage();
     player1Text.classList.remove("current-player", "player1-border");
     player2Text.classList.remove("current-player", "player2-border");
     if(player===0) {player = 1; player2Text.classList.add("current-player", "player2-border")}
     else {player = 0; player1Text.classList.add("current-player", "player1-border")}
+    if(barrageActive){
+        StartBarrage();
+        PlaySFX('media/barrage_siren.mp3');
+    }
 }
 
 function PlaySFX(audio, volume){
@@ -222,7 +230,7 @@ function UpdateStockMoves() {
             } else if (stock.turnsRemaining === 0) {
                 cash[playerIndex] += 8;
                 UpdateCash();
-                alert(`Stock successful! Player ${playerIndex + 1} gains 8 cash.`);
+                alert(`Investment successful! Player ${playerIndex + 1} gains 8 cash.`);
 
                 ResetStock(stock);
             }
@@ -277,12 +285,96 @@ function PlaceMine(){
 
 function Explosion(card) {
     if (mines.includes(card)) {
+        if(card) mines = mines.filter(mine => mine !== card);
         PlaySFX('media/mine_preexplosion.mp3');
         setTimeout(() => {
-            mines = mines.filter(mine => mine !== card);
+            BuyLock(false);
             ChangePlayer();
             PlaySFX('media/mine_explosion.mp3',1);
+            setTimeout(() => {
+                const explosionfx = document.createElement('div');
+                explosionfx.classList.add('explosion-effect');
+                card.appendChild(explosionfx);
+                setTimeout(() => {
+                    card.removeChild(explosionfx);
+                }, 700);
+            }, 100);
         }, 500);
+    }
+}
+
+function StartBarrage(){
+    barrageTargets = getRandomCards();
+    ShootBarrage(barrageTargets);
+}
+
+function ShootBarrage(targets){
+    targets.forEach((card, index) => {
+        const delay = index * 500;
+
+        setTimeout(() => {
+            if (crosshairs >= maxCrosshairs || card.querySelector('.crosshair')) return;
+
+            const crosshair = document.createElement('img');
+            crosshair.src = 'media/crosshair.png';
+            crosshair.classList.add('crosshair');
+            card.appendChild(crosshair);
+            crosshairs++;
+
+            crosshair.classList.add('crosshair-animate');
+            setTimeout(() => {
+                if (barrageActive) StartBarrage();
+            }, 700);
+
+            setTimeout(() => {
+                card.removeChild(crosshair);
+                crosshairs--;
+                BarrageExplosion(card);
+            }, 1500);
+
+        }, delay);
+    });
+}
+
+function getRandomCards() {
+    const cards = Array.from(document.querySelectorAll('.card'));
+    const targetCount = Math.min(2, 8);
+    return cards.sort(() => 0.5 - Math.random()).slice(0, targetCount);
+}
+
+let mousePosition = { x: 0, y: 0 };
+document.addEventListener('mousemove', (e) => {
+    mousePosition.x = e.pageX;
+    mousePosition.y = e.pageY;
+});
+
+function BarrageExplosion(card) {
+    const cardRect = card.getBoundingClientRect();
+    PlaySFX('media/barrage_beep.mp3',1);
+    setTimeout(() => {
+        const explosionfx = document.createElement('div');
+        explosionfx.classList.add('explosion-effect');
+        card.appendChild(explosionfx);
+        PlaySFX('media/barrage_explosion.mp3',1);
+
+        const checkMouseInside = setInterval(() => {
+            if(barrageActive && mousePosition.x >= cardRect.left && mousePosition.x <= cardRect.right && mousePosition.y >= cardRect.top && mousePosition.y <= cardRect.bottom){
+                barrageActive = false;
+                BuyLock(false);
+                ChangePlayer();
+                clearInterval(checkMouseInside);
+            }
+        }, 50);
+        setTimeout(() => {
+            card.removeChild(explosionfx);
+            clearInterval(checkMouseInside); 
+        }, 700);
+    }, 100);
+}
+
+function StopBarrage (){
+    if(crosshairs > 0){
+        barrageActive = false;
     }
 }
 
@@ -298,7 +390,7 @@ function buy(value){
             return true;
         }
         else{ 
-            /*PlaySFX*/
+            PlaySFX('media/poor.mp3')
             return false;
         }
     }else return false;
@@ -416,6 +508,8 @@ sb_barrage.innerHTML = "Barrage Bombardment<br>(6pts)"
 sb_barrage.addEventListener("click", () => {
     if(buy(6)){ 
         PlaySFX('media/purchase.mp3',1);
+        /*random smich*/
+        barrageActive = true;
     }
 });
 shopContainer.appendChild(sb_barrage);

@@ -117,6 +117,85 @@ h1 {
     pointer-events: none;
 }
 
+@keyframes explode {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.3);
+        opacity: 0.7;
+    }
+    100% {
+        transform: scale(1.5);
+        opacity: 0;
+    }
+}
+
+.explosion-effect {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 0, 0, 0.8);
+    border-radius: 50%;
+    pointer-events: none;
+    animation: explode 0.7s ease-out forwards;
+}
+
+.crosshair {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 10%;
+    height: 10%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+}
+
+.crosshair-animate {
+    animation: crosshair-grow 1.5s forwards;
+}
+
+@keyframes crosshair-grow {
+    0% {
+        width: 10%;
+        height: 10%;
+        opacity: 0.5;
+    }
+    50% {
+        width: 80%;
+        height: 80%;
+        opacity: 1;
+    }
+    70% { 
+        opacity: 0; 
+        width: 80%;
+        height: 80%;}
+    80% { 
+        opacity: 1; 
+        width: 80%;
+        height: 80%;}
+    90% { 
+        opacity: 0; 
+        width: 85%;
+        height: 85%;}
+    100% { 
+        opacity: 1;
+        width: 90%;
+        height: 90%; }
+}
+
+@keyframes crosshair-flash {
+    0% { opacity: 0; }
+    20% { opacity: 1; }
+    40% { opacity: 0; }
+    60% { opacity: 1; }
+    80% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
 /* stats*/
 
 .stats-container {
