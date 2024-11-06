@@ -15,7 +15,7 @@ let mines = [];
 let cardsArray = [...images, ...images];
 
 const headerImage = document.createElement("img");
-headerImage.src = "logo_pexeso.png";
+headerImage.src = "media/logo_pexeso.png";
 headerImage.alt = "Game Header Image";
 headerImage.className = "header-image";
 
@@ -75,10 +75,10 @@ function Check() {
         let reward = 2;
         if(card0.image !== "💰") {
             setTimeout(() => {
-                PlaySFX('success.mp3', 1);
+                PlaySFX('media/success.mp3', 1);
             }, 300);
         } else {
-            PlaySFX('jackpot.mp3', 1);
+            PlaySFX('media/jackpot.mp3', 1);
             reward = 4;
         }
 
@@ -126,7 +126,7 @@ function Check() {
 
         BuyLock(false);
     } else {
-        PlaySFX('wrong.mp3', 0.4);
+        PlaySFX('media/wrong.mp3', 0.4);
         setTimeout(function() {
             FlipBack(card0);
             setTimeout(function() {
@@ -207,7 +207,7 @@ function PlaceStocks() {
             container.removeEventListener("click", selectStockCard);
             stockSelect = false;
         } else if (card) {
-            PlaySFX('stocks_denied.mp3', 1);
+            PlaySFX('media/stocks_denied.mp3', 1);
         }
         
     };
@@ -239,7 +239,7 @@ function PlaceMine(){
     stockSelect = true;
 
     const followImage = document.createElement('img');
-    followImage.src = 'mine.png';
+    followImage.src = 'media/mine.png';
     followImage.style.position = 'absolute';
     followImage.style.pointerEvents = 'none';
     followImage.style.width = '2.5%';
@@ -263,13 +263,13 @@ function PlaceMine(){
             stockSelect = false;
             followImage.remove();
 
-            PlaySFX('mine_ground.mp3',1);
+            PlaySFX('media/mine_ground.mp3',1);
             setTimeout(() => {
-                PlaySFX('mine_land.mp3',1);
+                PlaySFX('media/mine_land.mp3',1);
             }, 150);
             card.addEventListener('mouseenter', () => Explosion(card));
         } else if (card) {
-            PlaySFX('stocks_denied.mp3', 1);
+            PlaySFX('media/stocks_denied.mp3', 1);
         }
     };
     container.addEventListener("click", selectCard);
@@ -277,11 +277,11 @@ function PlaceMine(){
 
 function Explosion(card) {
     if (mines.includes(card)) {
-        PlaySFX('mine_preexplosion.mp3');
+        PlaySFX('media/mine_preexplosion.mp3');
         setTimeout(() => {
             mines = mines.filter(mine => mine !== card);
             ChangePlayer();
-            PlaySFX('mine_explosion.mp3',1);
+            PlaySFX('media/mine_explosion.mp3',1);
         }, 500);
     }
 }
@@ -365,7 +365,7 @@ sb_tripleDraft.innerHTML = "Triple Draft<br>(3pts)"
 sb_tripleDraft.addEventListener("click", () => {
     if(buy(3)) {
         tripleDraft = true;
-        PlaySFX('purchase.mp3',1);}
+        PlaySFX('media/purchase.mp3',1);}
 });
 shopContainer.appendChild(sb_tripleDraft);
 
@@ -383,9 +383,9 @@ sb_landMine.innerHTML = "Land Mine<br>(4pts)"
 sb_landMine.addEventListener("click", () => {
     if(buy(4)){ 
         PlaceMine();
-        PlaySFX('mine_arm.mp3',1);
+        PlaySFX('media/mine_arm.mp3',1);
         setTimeout(() => {
-            PlaySFX('mine_arm.mp3',1);
+            PlaySFX('media/mine_arm.mp3',1);
         }, 75);
     }
 });
@@ -396,13 +396,13 @@ sb_elevatorMusic.className = "shop-button";
 sb_elevatorMusic.innerHTML = "Elevator Music<br>(1pt)"
 sb_elevatorMusic.addEventListener("click", () => {
     if(buy(1)){ 
-        PlaySFX('elevator_ding.mp3',1);
+        PlaySFX('media/elevator_ding.mp3',1);
         setTimeout(() => {
-            PlaySFX('elevator_tune.mp3',1);
+            PlaySFX('media/elevator_tune.mp3',1);
             setTimeout(() => {
-                PlaySFX('elevator_noise.mp3',1);
+                PlaySFX('media/elevator_noise.mp3',1);
                 setTimeout(() => {
-                   PlaySFX('elevator_voice.mp3',1);
+                   PlaySFX('media/elevator_voice.mp3',1);
                 }, 79000);
             }, 20000);
         }, 1000);
@@ -415,7 +415,7 @@ sb_barrage.className = "shop-button";
 sb_barrage.innerHTML = "Barrage Bombardment<br>(6pts)"
 sb_barrage.addEventListener("click", () => {
     if(buy(6)){ 
-        PlaySFX('purchase.mp3',1);
+        PlaySFX('media/purchase.mp3',1);
     }
 });
 shopContainer.appendChild(sb_barrage);
