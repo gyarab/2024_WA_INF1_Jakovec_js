@@ -463,7 +463,7 @@ function moveMaxVerstappen(mv) {
 });*/
 function randomMaxVerstappenEvent() {
     setInterval(() => {
-        if (Math.random() < 0.1) { 
+        if (Math.random() < 0.2) { 
             createMaxVerstappen();
         }
     }, 60000);
@@ -610,7 +610,28 @@ sb_barrage.innerHTML = "Barrage Bombardment<br>(6pts)"
 sb_barrage.addEventListener("click", () => {
     if(buy(6)){ 
         PlaySFX('media/purchase.mp3',1);
-        /*random smich*/
+        const laugh = Math.floor(Math.random() * 6) + 1;
+        switch (laugh){
+            case 1:
+                PlaySFX('media/laugh (1).mp3',1);
+                break;
+            case 2:
+                PlaySFX('media/laugh (2).mp3',1);
+                break;
+            case 3:
+                PlaySFX('media/laugh (3).mp3',1);
+                break;
+            case 4:
+                PlaySFX('media/laugh (4).mp3',1);
+                break;
+            case 5:
+                PlaySFX('media/laugh (5).mp3',1);
+                break;
+            case 6:
+                PlaySFX('media/laugh (6).mp3',1);
+                break;
+                                    
+        }
         barrageActive = true;
     }
 });
