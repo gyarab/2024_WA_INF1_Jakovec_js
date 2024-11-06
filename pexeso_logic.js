@@ -262,15 +262,29 @@ function PlaceMine(){
             container.removeEventListener("click", selectCard);
             stockSelect = false;
             followImage.remove();
+
+            PlaySFX('mine_ground.mp3',1);
+            setTimeout(() => {
+                PlaySFX('mine_land.mp3',1);
+            }, 150);
+            card.addEventListener('mouseenter', () => Explosion(card));
         } else if (card) {
             PlaySFX('stocks_denied.mp3', 1);
         }
     };
-
     container.addEventListener("click", selectCard);
 }
 
-
+function Explosion(card) {
+    if (mines.includes(card)) {
+        PlaySFX('mine_preexplosion.mp3');
+        setTimeout(() => {
+            mines = mines.filter(mine => mine !== card);
+            ChangePlayer();
+            PlaySFX('mine_explosion.mp3',1);
+        }, 500);
+    }
+}
 
 function buy(value){
     if(!buyLock){
@@ -283,7 +297,10 @@ function buy(value){
             console.log("transakce přijata");
             return true;
         }
-        else return false;
+        else{ 
+            /*PlaySFX*/
+            return false;
+        }
     }else return false;
 }
 
@@ -369,7 +386,7 @@ sb_landMine.addEventListener("click", () => {
         PlaySFX('mine_arm.mp3',1);
         setTimeout(() => {
             PlaySFX('mine_arm.mp3',1);
-        }, 50);
+        }, 75);
     }
 });
 shopContainer.appendChild(sb_landMine);
