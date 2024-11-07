@@ -264,7 +264,7 @@ function PlaceMine(){
     followImage.src = 'media/mine.png';
     followImage.style.position = 'absolute';
     followImage.style.pointerEvents = 'none';
-    followImage.style.width = '4%';
+    followImage.style.width = '3%';
     followImage.style.height = '3%';
     document.body.appendChild(followImage);
 
