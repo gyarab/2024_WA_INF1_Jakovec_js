@@ -4,7 +4,7 @@ let selectedCards = [];
 let player = 0;
 let pairsFound = 0;
 let cardsFound = [0,0];
-let cash = [0,0];
+let cash = [10,10];
 
 let buyLock = false;
 let tripleDraft = false;
@@ -51,7 +51,7 @@ function Instantiate(image) {
     });
     return card;
 }
-
+/*otoiceni karty*/
 function Flip(card, image) {
     if (selectedCards.length < (tripleDraft ? 3 : 2) && !card.classList.contains("flip") && !stockSelect) {
         card.classList.add("flip");
@@ -63,14 +63,14 @@ function Flip(card, image) {
         }
     }
 }
-
+/*navraceni karty do puvodniho stavu*/
 function FlipBack(card_){
     card_.card.classList.add("flip-back");
     setTimeout(() => {
         card_.card.classList.remove("flip", "flip-back");
     }, 75);
 }
-
+/*kontrola otocenych karet a paru*/
 function Check() {
     const card0 = selectedCards[0];
     const card1 = selectedCards[1];
@@ -171,12 +171,14 @@ function ChangePlayer(){
     }
 }
 
+/*spusteni audia*/
 function PlaySFX(audio, volume){
     var success_a = new Audio(audio);
     audio.volume = volume;
     success_a.play();
 }
 
+/*vykresleni aktualniho stavu penez a bodu*/
 function UpdateCash() {
     player1Cash.textContent = `Cash: ${cash[0]}`;
     player2Cash.textContent = `Cash: ${cash[1]}`;
@@ -184,6 +186,7 @@ function UpdateCash() {
     player2Score.textContent = `Points: ${cardsFound[1]}`;
 }
 
+/*zamknout moznost nakupu*/
 function BuyLock(value){
     if (value){
         buyLock = true;
@@ -202,6 +205,7 @@ function hasStockOnCard(card, playerIndex) {
     return playerStocks[playerIndex].some(stock => stock.card === card);
 }
 
+/*stock abilita*/
 function PlaceStocks() {
     alert("Select a card you want to invest in. The card must stay unmatched for 6 turns.")
 
@@ -258,6 +262,7 @@ function ResetStock(stock) {
     playerStocks[stock.playerIndex].splice(stock.stockIndex, 1);
 }
 
+/*Land mine abilita*/
 function PlaceMine(){
     stockSelect = true;
 
@@ -297,7 +302,7 @@ function PlaceMine(){
     };
     container.addEventListener("click", selectCard);
 }
-
+/*expoloze miny (hrac prejel pres podminovatnou kartu)*/
 function Explosion(card) {
     if (mines.includes(card)) {
         if(card) mines = mines.filter(mine => mine !== card);
@@ -318,6 +323,7 @@ function Explosion(card) {
     }
 }
 
+/*Bombardovaci abilita*/
 function StartBarrage(){
     barrageTargets = getRandomCards();
     ShootBarrage(barrageTargets);
@@ -362,7 +368,7 @@ document.addEventListener('mousemove', (e) => {
     mousePosition.x = e.pageX;
     mousePosition.y = e.pageY;
 });
-
+/*check pozice hracovy mysi po dopadu bomby*/
 function BarrageExplosion(card) {
     const cardRect = card.getBoundingClientRect();
     PlaySFX('media/barrage_beep.mp3',1);
@@ -482,6 +488,7 @@ function clearMaxVerstappen() {
     }
 }
 
+/*kontrola hracovych financi pri nakupu*/
 function buy(value){
     if(!buyLock){
         if(cash[player] >= value) {
