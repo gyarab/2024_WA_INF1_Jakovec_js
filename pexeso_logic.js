@@ -4,7 +4,7 @@ let selectedCards = [];
 let player = 0;
 let pairsFound = 0;
 let cardsFound = [0,0];
-let cash = [10,10];
+let cash = [0,0];
 
 let buyLock = false;
 let tripleDraft = false;
@@ -179,8 +179,9 @@ function PlaySFX(audio, volume){
 
 function UpdateCash() {
     player1Cash.textContent = `Cash: ${cash[0]}`;
-
     player2Cash.textContent = `Cash: ${cash[1]}`;
+    player1Score.textContent = `Points: ${cardsFound[0]}`;
+    player2Score.textContent = `Points: ${cardsFound[1]}`;
 }
 
 function BuyLock(value){
@@ -555,7 +556,7 @@ statsContainer.parentNode.insertBefore(shopContainer, statsContainer.nextSibling
 
 const sb_tripleDraft = document.createElement("button");
 sb_tripleDraft.className = "shop-button";
-sb_tripleDraft.innerHTML = "Triple Draft<br>(3pts)"
+sb_tripleDraft.innerHTML = "Triple Draft<br>(3$)"
 sb_tripleDraft.addEventListener("click", () => {
     if(buy(3)) {
         tripleDraft = true;
@@ -565,7 +566,7 @@ shopContainer.appendChild(sb_tripleDraft);
 
 const sb_stocks = document.createElement("button");
 sb_stocks.className = "shop-button";
-sb_stocks.innerHTML = "Stocks<br>(3pts)"
+sb_stocks.innerHTML = "Stocks<br>(3$)"
 sb_stocks.addEventListener("click", () => {
     if(buy(3)){ stockSelect = true;PlaceStocks();}
 });
@@ -573,7 +574,7 @@ shopContainer.appendChild(sb_stocks);
 
 const sb_landMine = document.createElement("button");
 sb_landMine.className = "shop-button";
-sb_landMine.innerHTML = "Land Mine<br>(4pts)"
+sb_landMine.innerHTML = "Land Mine<br>(4$)"
 sb_landMine.addEventListener("click", () => {
     if(buy(4)){ 
         PlaceMine();
@@ -606,7 +607,7 @@ shopContainer.appendChild(sb_elevatorMusic);
 
 const sb_barrage = document.createElement("button");
 sb_barrage.className = "shop-button";
-sb_barrage.innerHTML = "Barrage Bombardment<br>(6pts)"
+sb_barrage.innerHTML = "Barrage Bombardment<br>(6$)"
 sb_barrage.addEventListener("click", () => {
     if(buy(6)){ 
         PlaySFX('media/purchase.mp3',1);
