@@ -588,7 +588,7 @@ shopContainer.appendChild(sb_landMine);
 
 const sb_elevatorMusic = document.createElement("button");
 sb_elevatorMusic.className = "shop-button";
-sb_elevatorMusic.innerHTML = "Elevator Music<br>(1pt)"
+sb_elevatorMusic.innerHTML = "Elevator Music<br>(1$)"
 sb_elevatorMusic.addEventListener("click", () => {
     if(buy(1)){ 
         PlaySFX('media/elevator_ding.mp3',1);
